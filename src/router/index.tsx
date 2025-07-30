@@ -6,6 +6,7 @@ import Dashboard from "@/pages/Dashboard";
 import DashboarLayout from "@/components/DashboardLayout";
 import ProgramList from "@/pages/programs/ProgramList";
 import AddNewProgram from "@/pages/programs/AddNewProgram";
+import PlacesList from "@/pages/places/PlacesList";
 
 function AuthRedirect() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -49,6 +50,11 @@ export const router = createBrowserRouter([
        {
         path: "programs/add",
         element: <AddNewProgram />,
+      },
+
+      {
+        path: "places",
+        element: <PlacesList />,
       },
     ],
   },

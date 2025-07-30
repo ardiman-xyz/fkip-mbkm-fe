@@ -18,6 +18,7 @@ import {
   NotebookPen,
   type LucideIcon,
   SwatchBook,
+  MapPin,
  
 } from "lucide-react";
 import type { JSX } from "react";
@@ -46,9 +47,9 @@ const menuSections: MenuSection[] = [
         icon: SwatchBook,
       },
       {
-        title: "Jenis ujian",
-        url: "/exam-category",
-        icon: NotebookPen,
+        title: "Lokasi",
+        url: "/places",
+        icon: MapPin,
       },
       {
         title: "Users",
