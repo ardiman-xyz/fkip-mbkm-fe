@@ -17,13 +17,8 @@ import {
   Building2,
   NotebookPen,
   type LucideIcon,
-  Mails,
-  NotebookText,
-  Globe,
-  BellRing,
-  Shield,
-  FileText,
-  Smile,
+  SwatchBook,
+ 
 } from "lucide-react";
 import type { JSX } from "react";
 import { useAuth } from "@/context/AuthProvider";
@@ -46,9 +41,9 @@ const menuSections: MenuSection[] = [
     label: "Master Data",
     items: [
       {
-        title: "Program Studi",
-        url: "/departments",
-        icon: Building2,
+        title: "Program",
+        url: "/programs",
+        icon: SwatchBook,
       },
       {
         title: "Jenis ujian",
@@ -89,7 +84,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ items, location }) => (
   </SidebarMenu>
 );
 
-export function StudentAppSidebar(): JSX.Element | null {
+export function AppSidebar(): JSX.Element | null {
   const location = useLocation();
   const { user } = useAuth();
 

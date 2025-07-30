@@ -4,6 +4,7 @@ import Login from "@/pages/auth/Login";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Dashboard from "@/pages/Dashboard";
 import DashboarLayout from "@/components/DashboardLayout";
+import ProgramList from "@/pages/programs/ProgramList";
 
 function AuthRedirect() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -39,6 +40,10 @@ export const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <Dashboard />,
+      },
+      {
+        path: "programs",
+        element: <ProgramList />,
       },
     ],
   },

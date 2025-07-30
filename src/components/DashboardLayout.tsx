@@ -2,7 +2,7 @@ import { Outlet } from "react-router";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import type { ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
-import { StudentAppSidebar } from "./StudentAppSidebar";
+import { AppSidebar } from "./StudentAppSidebar";
 
 interface DashboardLayoutProps {
   children?: ReactNode;
@@ -13,7 +13,7 @@ export default function DashboarLayout({
 }: DashboardLayoutProps) {
   return (
     <SidebarProvider>
-      <StudentAppSidebar />
+      <AppSidebar />
       <Toaster richColors position="top-center" />
       <main className="flex-1 w-full">
         <div className="border-b print:border-none print:px-0 print:py-0 px-4 py-2">
