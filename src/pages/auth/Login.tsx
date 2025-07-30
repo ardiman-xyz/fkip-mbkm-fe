@@ -15,29 +15,8 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import { useTitle } from "@/hooks/useTitle";
-
-interface LoginFormData {
-  email: string;
-  password: string;
-}
-
-interface LoginResponse {
-  success: boolean;
-  message: string;
-  data?: {
-    user: {
-      id: number;
-      name: string;
-      email: string;
-      department_id?: number;
-      email_verified_at?: string;
-      created_at: string;
-      updated_at: string;
-    };
-    token: string;
-  };
-  error?: string;
-}
+import { authService } from "@/services/authService";
+import type { LoginFormData } from "@/types/auth";
 
 export default function Login() {
   const { login, isAuthenticated } = useAuth();
@@ -74,25 +53,17 @@ export default function Login() {
     setSuccess(null);
 
     try {
-      const response = await fetch("http://localhost:3001/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data: LoginResponse = await response.json();
+      const data = await authService.login(formData);
 
       if (data.success && data.data) {
         // Use auth context
         login(data.data.token, data.data.user);
         setSuccess("Login successful! Redirecting...");
       } else {
-        setError(data.error || "Login failed");
+        setError(data.error || data.message || "Login failed");
       }
-    } catch (err) {
-      setError("Network error. Please check if the server is running.");
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred");
       console.error("Login error:", err);
     } finally {
       setIsLoading(false);
