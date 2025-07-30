@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const API_CONFIG = {
-  baseURL: "http://127.0.0.1:8001/api", // hardcode sementara
+  baseURL: "http://127.0.0.1:8000/api", // hardcode sementara
   timeout: 5000,
   enableLogging: true, // set false untuk production
 };

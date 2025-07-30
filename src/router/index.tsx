@@ -2,9 +2,8 @@ import { createBrowserRouter, Navigate } from "react-router";
 import { useAuth } from "@/context/AuthProvider";
 import Login from "@/pages/auth/Login";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import DashboarStudentdLayout from "@/components/StudentLayout/DashboardLayout";
-import StudentDashboard from "@/pages/student/StudentDashboard";
-import AdminLogin from "@/pages/admin/auth/AdminLogin";
+import Dashboard from "@/pages/Dashboard";
+import DashboarLayout from "@/components/DashboardLayout";
 
 function AuthRedirect() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -25,16 +24,6 @@ export const router = createBrowserRouter([
     path: "/",
     element: <AuthRedirect />,
   },
-
-  // admin route
-
-  {
-    path: "/admin/login",
-    element: <AdminLogin />,
-  },
-
-  // end admin route
-
   {
     path: "/login",
     element: <Login />,
@@ -43,13 +32,13 @@ export const router = createBrowserRouter([
     path: "/",
     element: (
       <ProtectedRoute>
-        <DashboarStudentdLayout />
+        <DashboarLayout />
       </ProtectedRoute>
     ),
     children: [
       {
         path: "dashboard",
-        element: <StudentDashboard />,
+        element: <Dashboard />,
       },
     ],
   },

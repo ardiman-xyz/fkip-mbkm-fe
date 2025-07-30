@@ -13,22 +13,22 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Binary, Eye, EyeOff, Loader2, Lock } from "lucide-react";
+import { Mail, Eye, EyeOff, Loader2, Shield } from "lucide-react";
 import { useTitle } from "@/hooks/useTitle";
-import { authService } from "@/services/authService";
-import type { LoginFormData } from "@/types/auth";
+import type { AdminLoginFormData } from "@/types/authAdmin";
+import { adminAuthService } from "@/services/authAdmin";
 
-export default function Login() {
+export default function AdminLogin() {
   const { login, isAuthenticated } = useAuth();
 
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
 
-  useTitle("Login - MBKM FKIP");
+  useTitle("Admin Login - MBKM FKIP");
 
-  const [formData, setFormData] = useState<LoginFormData>({
-    identifier: "",
+  const [formData, setFormData] = useState<AdminLoginFormData>({
+    email: "",
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +36,7 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const isFormEmpty = formData.identifier === "" && formData.password === "";
+  const isFormEmpty = formData.email === "" && formData.password === "";
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -63,35 +63,34 @@ export default function Login() {
     setSuccess(null);
 
     try {
-      const data = await authService.login(formData);
+      const data = await adminAuthService.login(formData);
 
-      console.info(data);
       if (data.success && data.data) {
         // Use auth context
-        login(data.data.token, data.data.student);
+        login(data.data.token, data.data.admin);
         setSuccess("Login successful! Redirecting...");
       } else {
         setError(data.error || data.message || "Login failed");
       }
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
-      console.error("Login error:", err);
+      console.error("Admin login error:", err);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
-            <div className="p-3 bg-primary rounded-full">
-              <Lock className="h-6 w-6 text-primary-foreground" />
+            <div className="p-3 bg-slate-800 rounded-full">
+              <Shield className="h-6 w-6 text-white" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-          <CardDescription>Sign in to your account to continue</CardDescription>
+          <CardTitle className="text-2xl font-bold">Admin Portal</CardTitle>
+          <CardDescription>Sign in to admin dashboard</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
@@ -108,14 +107,15 @@ export default function Login() {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="nim">NIM</Label>
+            <Label htmlFor="email">Email</Label>
             <div className="relative">
-              <Binary className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                id="nim"
-                name="identifier"
-                placeholder="Enter your nim"
-                value={formData.identifier}
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Enter your email"
+                value={formData.email}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 className="pl-10"
@@ -128,7 +128,7 @@ export default function Login() {
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Shield className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 id="password"
                 name="password"
@@ -158,9 +158,9 @@ export default function Login() {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col space-y-4 ">
+        <CardFooter className="flex flex-col space-y-4">
           <Button
-            className="w-full"
+            className="w-full bg-slate-800 hover:bg-slate-700"
             size="lg"
             disabled={isLoading}
             onClick={handleLogin}
@@ -171,14 +171,13 @@ export default function Login() {
                 Signing in...
               </>
             ) : (
-              "Sign In"
+              "Sign In as Admin"
             )}
           </Button>
 
           <div className="text-center text-sm text-muted-foreground">
-            Petunjuk penggunaan akun{" "}
-            <Button variant="link" className="px-0 text-sm">
-              klik di sini
+            <Button variant="link" className="px-0 text-sm" asChild>
+              <a href="/login">Student Login</a>
             </Button>
           </div>
         </CardFooter>

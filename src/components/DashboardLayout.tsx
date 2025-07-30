@@ -2,13 +2,13 @@ import { Outlet } from "react-router";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import type { ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
-import { StudentAppSidebar } from "../StudentAppSidebar";
+import { StudentAppSidebar } from "./StudentAppSidebar";
 
 interface DashboardLayoutProps {
   children?: ReactNode;
 }
 
-export default function DashboarStudentdLayout({
+export default function DashboarLayout({
   children,
 }: DashboardLayoutProps) {
   return (
