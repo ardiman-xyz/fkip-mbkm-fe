@@ -5,7 +5,7 @@ export const authService = {
   async login(credentials: LoginFormData): Promise<LoginResponse> {
     try {
       const response = await apiClient.post<LoginResponse>(
-        "/auth/login",
+        "/student/login",
         credentials
       );
       return response.data;

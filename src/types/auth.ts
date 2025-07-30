@@ -1,4 +1,4 @@
-export interface User {
+export interface Student {
   id: number;
   name: string;
   email: string;
@@ -9,7 +9,7 @@ export interface User {
 }
 
 export interface LoginFormData {
-  email: string;
+  identifier: string;
   password: string;
 }
 
@@ -17,7 +17,7 @@ export interface LoginResponse {
   success: boolean;
   message: string;
   data?: {
-    user: User;
+    student: Student;
     token: string;
   };
   error?: string;
