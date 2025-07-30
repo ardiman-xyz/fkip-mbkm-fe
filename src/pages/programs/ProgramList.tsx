@@ -1,9 +1,133 @@
-import React from 'react'
+import React from 'react';
+import { useTitle } from '@/hooks/useTitle';
+import { toast } from 'sonner';
+
+import type { Program } from '@/types/program';
+import { useProgramList } from '@/hooks/useProgramList';
+import { ProgramFilters, ProgramPagination, ProgramStats, ProgramTable } from './_components/ProgramListComponent';
 
 const ProgramList = () => {
-  return (
-    <div>ProgramList</div>
-  )
-}
+  useTitle('Programs - Admin Dashboard');
 
-export default ProgramList
+  const {
+    programs,
+    pagination,
+    statistics,
+    loading,
+    error,
+    params,
+    actions,
+  } = useProgramList();
+
+  // Handle program actions
+  const handleView = (program: Program) => {
+    console.log('View program:', program);
+    // TODO: Navigate to program detail page
+    toast.info(`Viewing program: ${program.name}`);
+  };
+
+  const handleEdit = (program: Program) => {
+    console.log('Edit program:', program);
+    // TODO: Navigate to program edit page
+    toast.info(`Editing program: ${program.name}`);
+  };
+
+  const handleDelete = (program: Program) => {
+    console.log('Delete program:', program);
+    // TODO: Show delete confirmation dialog
+    toast.warning(`Delete program: ${program.name}`);
+  };
+
+  const handleClone = (program: Program) => {
+    console.log('Clone program:', program);
+    // TODO: Implement clone functionality
+    toast.info(`Cloning program: ${program.name}`);
+  };
+
+  const handleToggleStatus = (program: Program) => {
+    console.log('Toggle status:', program);
+    // TODO: Implement toggle status functionality
+    const newStatus = program.status === 'Y' ? 'inactive' : 'active';
+    toast.success(`Program ${program.name} is now ${newStatus}`);
+  };
+
+  // Handle error state
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Programs</h1>
+          <p className="text-muted-foreground">
+            Manage MBKM programs and activities.
+          </p>
+        </div>
+
+        <div className="flex items-center justify-center py-16">
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-red-600">Error Loading Programs</h3>
+            <p className="text-muted-foreground mt-2">{error}</p>
+            <button
+              onClick={actions.refreshData}
+              className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Programs</h1>
+        <p className="text-muted-foreground">
+          Manage MBKM programs and activities.
+        </p>
+      </div>
+
+      {/* Statistics */}
+      <ProgramStats statistics={statistics} loading={loading} />
+
+      {/* Filters */}
+      <ProgramFilters
+        searchQuery={params.search || ''}
+        statusFilter={params.status || 'all'}
+        typeFilter={params.type || 'all'}
+        onSearchChange={actions.handleSearch}
+        onStatusChange={actions.handleStatusFilter}
+        onTypeChange={actions.handleTypeFilter}
+        onClearFilters={actions.clearFilters}
+      />
+
+      {/* Programs Table */}
+      <ProgramTable
+        programs={programs}
+        loading={loading}
+        onView={handleView}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onClone={handleClone}
+        onToggleStatus={handleToggleStatus}
+      />
+
+      {/* Pagination */}
+      {pagination && !loading && (
+        <ProgramPagination
+          currentPage={pagination.current_page}
+          lastPage={pagination.last_page}
+          perPage={pagination.per_page}
+          total={pagination.total}
+          from={pagination.from}
+          to={pagination.to}
+          onPageChange={actions.handlePageChange}
+          onPerPageChange={actions.handlePerPageChange}
+        />
+      )}
+    </div>
+  );
+};
+
+export default ProgramList;
