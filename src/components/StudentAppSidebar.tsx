@@ -62,61 +62,6 @@ const menuSections: MenuSection[] = [
       },
     ],
   },
-  {
-    label: "Layanan Surat",
-    items: [
-      {
-        title: "Surat izin penelitian",
-        url: "/research-letters",
-        icon: Mails,
-      },
-      {
-        title: "Surat aktif kuliah",
-        url: "/student/letter/active",
-        icon: Mails,
-      },
-    ],
-  },
-  {
-    label: "Penelitian & Seminar",
-    items: [
-      {
-        title: "Pengajuan Judul",
-        url: "/student/research",
-        icon: NotebookText,
-      },
-      {
-        title: "Ujian Seminar",
-        url: "/student/exam",
-        icon: Smile,
-      },
-      {
-        title: "Surat ket. ujian",
-        url: "/student/letter/exam",
-        icon: FileText,
-      },
-    ],
-  },
-  {
-    label: "Pengaturan",
-    items: [
-      {
-        title: "Umum",
-        url: "/settings/general",
-        icon: Globe,
-      },
-      {
-        title: "Keamanan",
-        url: "/settings/security",
-        icon: Shield,
-      },
-      {
-        title: "Notifikasi",
-        url: "/settings/notifications",
-        icon: BellRing,
-      },
-    ],
-  },
 ];
 
 // Props interface for MenuSection component

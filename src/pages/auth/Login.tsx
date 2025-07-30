@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Binary, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
+import { Binary, Eye, EyeOff, Loader2, Lock } from "lucide-react";
 import { useTitle } from "@/hooks/useTitle";
 import { authService } from "@/services/authService";
 import type { LoginFormData } from "@/types/auth";
@@ -48,7 +48,13 @@ export default function Login() {
     if (error) setError(null);
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !isFormEmpty && !isLoading) {
+      handleLogin(e);
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent | React.KeyboardEvent) => {
     if (isFormEmpty) return;
 
     e.preventDefault();
@@ -111,6 +117,7 @@ export default function Login() {
                 placeholder="Enter your nim"
                 value={formData.identifier}
                 onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
                 className="pl-10"
                 required
                 disabled={isLoading}
@@ -129,6 +136,7 @@ export default function Login() {
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
                 className="pl-10 pr-10"
                 required
                 disabled={isLoading}
