@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTitle } from '@/hooks/useTitle';
 import { toast } from 'sonner';
 
 import type { Program } from '@/types/program';
 import { useProgramList } from '@/hooks/useProgramList';
 import { ProgramFilters, ProgramPagination, ProgramStats, ProgramTable } from './_components/ProgramListComponent';
+import { ProgramEditModal } from './_components/ProgramEditModal';
 
 const ProgramList = () => {
   useTitle('Programs - Admin Dashboard');
+
+    const [editingProgram, setEditingProgram] = useState<Program | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
 
   const {
     programs,
@@ -18,23 +23,31 @@ const ProgramList = () => {
     params,
     actions,
   } = useProgramList();
+  
 
-  // Handle program actions
   const handleView = (program: Program) => {
     console.log('View program:', program);
-    // TODO: Navigate to program detail page
     toast.info(`Viewing program: ${program.name}`);
   };
 
-  const handleEdit = (program: Program) => {
-    console.log('Edit program:', program);
-    // TODO: Navigate to program edit page
-    toast.info(`Editing program: ${program.name}`);
+   const handleEdit = (program: Program) => {
+    setEditingProgram(program);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSuccess = (updatedProgram: Program) => {
+    // Refresh the program list to get updated data
+    actions.refreshData();
+    toast.success(`Program "${updatedProgram.name}" updated successfully`);
+  };
+
+  const handleEditClose = () => {
+    setIsEditModalOpen(false);
+    setEditingProgram(null);
   };
 
   const handleDelete = (program: Program) => {
     console.log('Delete program:', program);
-    // TODO: Show delete confirmation dialog
     toast.warning(`Delete program: ${program.name}`);
   };
 
@@ -126,6 +139,13 @@ const ProgramList = () => {
           onPerPageChange={actions.handlePerPageChange}
         />
       )}
+
+       <ProgramEditModal
+        program={editingProgram}
+        open={isEditModalOpen}
+        onClose={handleEditClose}
+        onSuccess={handleEditSuccess}
+      />
     </div>
   );
 };
