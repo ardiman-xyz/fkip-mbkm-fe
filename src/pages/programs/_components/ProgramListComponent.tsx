@@ -182,12 +182,10 @@ export function ProgramFilters({
       </div>
 
       <div className="flex gap-2">
-        {onAddNew && (
           <Button onClick={onAddNew}>
             <Plus className="mr-2 h-4 w-4" />
             Add Program
           </Button>
-        )}
       </div>
     </div>
   );
@@ -350,19 +348,14 @@ export function ProgramTable({
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => onView(program)}>
+                          {/* <DropdownMenuItem onClick={() => onView(program)}>
                             <Eye className="mr-2 h-4 w-4" />
                             View Details
-                          </DropdownMenuItem>
+                          </DropdownMenuItem> */}
                           <DropdownMenuItem onClick={() => onEdit(program)}>
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => onClone(program)}>
-                            <Copy className="mr-2 h-4 w-4" />
-                            Clone
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
                           <DropdownMenuItem onClick={() => onToggleStatus(program)}>
                             {program.status === 'Y' ? (
                               <>

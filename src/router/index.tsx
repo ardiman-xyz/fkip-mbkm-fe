@@ -5,6 +5,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Dashboard from "@/pages/Dashboard";
 import DashboarLayout from "@/components/DashboardLayout";
 import ProgramList from "@/pages/programs/ProgramList";
+import AddNewProgram from "@/pages/programs/AddNewProgram";
 
 function AuthRedirect() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
       {
         path: "programs",
         element: <ProgramList />,
+      },
+       {
+        path: "programs/add",
+        element: <AddNewProgram />,
       },
     ],
   },

@@ -6,12 +6,24 @@ import type { Program } from '@/types/program';
 import { useProgramList } from '@/hooks/useProgramList';
 import { ProgramFilters, ProgramPagination, ProgramStats, ProgramTable } from './_components/ProgramListComponent';
 import { ProgramEditModal } from './_components/ProgramEditModal';
+import { ProgramStatusModal } from './_components/ProgramStatusModal';
+import { programService } from '@/services/programService';
+import { ProgramDeleteModal } from './_components/ProgramDeleteModal';
+import { useNavigate } from 'react-router';
 
 const ProgramList = () => {
   useTitle('Programs - Admin Dashboard');
 
-    const [editingProgram, setEditingProgram] = useState<Program | null>(null);
+  const navigate = useNavigate()
+
+  const [editingProgram, setEditingProgram] = useState<Program | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [statusProgram, setStatusProgram] = useState<Program | null>(null);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [isTogglingStatus, setIsTogglingStatus] = useState<number | null>(null);
+  const [deleteProgram, setDeleteProgram] = useState<Program | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeletingProgram, setIsDeletingProgram] = useState<number | null>(null);
 
 
   const {
@@ -46,10 +58,6 @@ const ProgramList = () => {
     setEditingProgram(null);
   };
 
-  const handleDelete = (program: Program) => {
-    console.log('Delete program:', program);
-    toast.warning(`Delete program: ${program.name}`);
-  };
 
   const handleClone = (program: Program) => {
     console.log('Clone program:', program);
@@ -57,11 +65,96 @@ const ProgramList = () => {
     toast.info(`Cloning program: ${program.name}`);
   };
 
-  const handleToggleStatus = (program: Program) => {
-    console.log('Toggle status:', program);
-    // TODO: Implement toggle status functionality
-    const newStatus = program.status === 'Y' ? 'inactive' : 'active';
-    toast.success(`Program ${program.name} is now ${newStatus}`);
+ const handleToggleStatus = async (program: Program) => {
+    // Show confirmation modal for critical status changes
+    if (program.status === 'Y' && program.registration_count > 0) {
+      setStatusProgram(program);
+      setIsStatusModalOpen(true);
+      return;
+    }
+
+    await performStatusToggle(program);
+  };
+
+  const performStatusToggle = async (program: Program) => {
+    setIsTogglingStatus(program.id);
+
+    try {
+      const result = await programService.toggleProgramStatus(program.id);
+      
+      const newStatus = result.status;
+      const statusText = result.status_text;
+      
+      actions.refreshData();
+      
+      const action = newStatus === 'Y' ? 'activated' : 'deactivated';
+      toast.success(`Program "${program.name}" has been ${action} successfully`, {
+        description: `Status changed to: ${statusText}`,
+        duration: 3000,
+      });
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update program status';
+      toast.error('Failed to update status', {
+        description: errorMessage,
+        duration: 5000,
+      });
+      console.error('Toggle status error:', error);
+    } finally {
+      setIsTogglingStatus(null);
+    }
+  };
+
+  const handleStatusConfirm = async () => {
+    if (statusProgram) {
+      await performStatusToggle(statusProgram);
+    }
+    setIsStatusModalOpen(false);
+    setStatusProgram(null);
+  };
+
+  const handleStatusCancel = () => {
+    setIsStatusModalOpen(false);
+    setStatusProgram(null);
+  };
+
+   const handleDelete = (program: Program) => {
+    setDeleteProgram(program);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async (programId: number, confirmText: string, forceDelete: boolean) => {
+    setIsDeletingProgram(programId);
+
+    try {
+      await programService.deleteProgram(programId);
+      
+      actions.refreshData();
+      
+      const program = programs.find(p => p.id === programId);
+      toast.success(`Program "${program?.name}" berhasil dihapus`, {
+        description: forceDelete ? 'Program dihapus permanen' : 'Program dipindahkan ke recycle bin',
+        duration: 4000,
+      });
+
+      setIsDeleteModalOpen(false);
+      setDeleteProgram(null);
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Gagal menghapus program';
+      toast.error('Gagal menghapus program', {
+        description: errorMessage,
+        duration: 5000,
+      });
+      console.error('Delete error:', error);
+    } finally {
+      setIsDeletingProgram(null);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteModalOpen(false);
+    setDeleteProgram(null);
   };
 
   // Handle error state
@@ -91,6 +184,9 @@ const ProgramList = () => {
     );
   }
 
+  const handleAdd = () => navigate("/programs/add");
+
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -102,7 +198,7 @@ const ProgramList = () => {
       </div>
 
       {/* Statistics */}
-      <ProgramStats statistics={statistics} loading={loading} />
+      <ProgramStats statistics={statistics} loading={loading}   />
 
       {/* Filters */}
       <ProgramFilters
@@ -113,6 +209,7 @@ const ProgramList = () => {
         onStatusChange={actions.handleStatusFilter}
         onTypeChange={actions.handleTypeFilter}
         onClearFilters={actions.clearFilters}
+        onAddNew={handleAdd}
       />
 
       {/* Programs Table */}
@@ -146,6 +243,21 @@ const ProgramList = () => {
         onClose={handleEditClose}
         onSuccess={handleEditSuccess}
       />
+      <ProgramStatusModal
+        program={statusProgram}
+        open={isStatusModalOpen}
+        onConfirm={handleStatusConfirm}
+        onCancel={handleStatusCancel}
+      />
+
+<ProgramDeleteModal
+        program={deleteProgram}
+        open={isDeleteModalOpen}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        isDeleting={isDeletingProgram === deleteProgram?.id}
+      />
+
     </div>
   );
 };
