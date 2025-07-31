@@ -144,11 +144,11 @@ export function SettingAddModal({
 
     // Optional date validations
     if (formData.tgl_pembekalan && formData.tgl_mulai) {
-      const pembelalanDate = new Date(formData.tgl_pembekalan);
+      const pembekalan = new Date(formData.tgl_pembekalan);
       const startDate = new Date(formData.tgl_mulai);
       
-      if (pembelalanDate > startDate) {
-        newErrors.tgl_pembekalan = 'Tanggal pembekalan sebaiknya sebelum tanggal mulai';
+      if (pembekalan < startDate) {
+        newErrors.tgl_pembekalan = 'Tanggal pembekalan sebaiknya setelah tanggal mulai';
       }
     }
 

@@ -10,6 +10,7 @@ import { SettingPagination } from '../_components/SettingPagination';
 import { SettingErrorState } from '../_components/SettingErrorState';
 import { SettingAddModal } from '../_components/SettingAddModal';
 import { SettingEditModal } from '../_components/SettingEditModal';
+import { SettingDeleteModal } from '../_components/SettingDeleteModal';
 import type { Setting } from '@/types/setting';
 
 const GuidanceList = () => {
@@ -33,6 +34,8 @@ const GuidanceList = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingSetting, setEditingSetting] = useState<Setting | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [deletingSetting, setDeletingSetting] = useState<Setting | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // Action handlers
   const handleView = (setting: Setting) => {
@@ -55,7 +58,22 @@ const GuidanceList = () => {
   };
 
   const handleDelete = (setting: Setting) => {
-    toast.warning(`Hapus pengaturan: ${setting.tahun_akademik} ${setting.semester}`);
+    setDeletingSetting(setting);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteSuccess = () => {
+    actions.refreshData();
+    if (deletingSetting) {
+      toast.success(`Pengaturan "${deletingSetting.tahun_akademik} ${deletingSetting.semester}" berhasil dihapus`);
+    }
+    setIsDeleteModalOpen(false);
+    setDeletingSetting(null);
+  };
+
+  const handleDeleteClose = () => {
+    setIsDeleteModalOpen(false);
+    setDeletingSetting(null);
   };
 
   const handleAddNew = () => {
@@ -151,6 +169,14 @@ const GuidanceList = () => {
         open={isEditModalOpen}
         onClose={handleEditClose}
         onSuccess={handleEditSuccess}
+      />
+
+      {/* Delete Modal */}
+      <SettingDeleteModal
+        setting={deletingSetting}
+        open={isDeleteModalOpen}
+        onClose={handleDeleteClose}
+        onSuccess={handleDeleteSuccess}
       />
     </div>
   );

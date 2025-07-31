@@ -64,7 +64,7 @@ const menuSections: MenuSection[] = [
      
       {
         title: "Pendaftar Program",
-        url: "/register",
+        url: "/register/list",
         icon: Users,
       },
        {

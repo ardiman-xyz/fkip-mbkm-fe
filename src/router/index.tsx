@@ -8,6 +8,8 @@ import ProgramList from "@/pages/programs/ProgramList";
 import AddNewProgram from "@/pages/programs/AddNewProgram";
 import PlacesList from "@/pages/places/PlacesList";
 import GuidanceList from "@/pages/setting/guidance/GuidanceList";
+import NotFound from "@/pages/NotFound";
+import RegisterList from "@/pages/register/RegisterList";
 
 function AuthRedirect() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -60,6 +62,14 @@ export const router = createBrowserRouter([
         path: "settings/guidance",
         element: <GuidanceList />,
       },
+      {
+        path: "register/list",
+        element: <RegisterList />,
+      },
     ],
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
