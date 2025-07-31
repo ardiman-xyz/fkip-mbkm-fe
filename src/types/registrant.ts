@@ -166,3 +166,18 @@ export interface UploadResponse {
   file_path: string;
   registrant: DetailedRegistrant;
 }
+
+export interface RegistrantsResponse {
+  registrants: {
+    data: Registrant[];
+    pagination: PaginationInfo;
+  };
+  statistics: RegistrantStatistics;
+  filters: FilterOptions;
+  active_setting?: {
+    tahun_akademik: string;
+    semester: string;
+    tgl_mulai: string;
+    tgl_berakhir: string;
+  };
+}

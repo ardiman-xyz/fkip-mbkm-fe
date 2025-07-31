@@ -7,7 +7,9 @@ import {
   Download, 
   Plus,
   RefreshCw,
-  AlertCircle
+  AlertCircle,
+  Calendar,
+  Badge
 } from 'lucide-react';
 import AcademicYearFilter from './_components/AcademicYearFilter';
 import RegisterFilters from './_components/RegisterFilters';
@@ -31,11 +33,12 @@ function RegisterList() {
     // Filter params
     params,
     
-    // Actions
+   currentSetting,
     actions,
   } = useRegistrantList();
 
-  // Derived states
+  
+
   const hasActiveFilters = 
     params.search || 
     (params.jenis_kegiatan && params.jenis_kegiatan !== 'all') ||
@@ -105,15 +108,39 @@ function RegisterList() {
         </div>
       </div>
 
-      {/* Academic Year & Semester Filter - Compact */}
-      <AcademicYearFilter
-        academicYear={params.tahun_akademik || '2024/2025'}
-        semester={params.semester || 'Ganjil'}
-        onAcademicYearChange={actions.setAcademicYear}
-        onSemesterChange={actions.setSemester}
-        loading={loading}
-      />
+      {currentSetting && (
+  <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
+    <CardContent className="p-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Calendar  className="h-4 w-4 text-green-600" />
+          <span className="text-sm font-medium text-green-900">
+            Menampilkan Periode Aktif: {currentSetting.tahun_akademik} {currentSetting.semester}
+          </span>
+          <Badge className="bg-green-100 text-green-700 text-xs">
+            Auto Filter
+          </Badge>
+        </div>
+        {currentSetting.tgl_mulai && currentSetting.tgl_berakhir && (
+          <div className="text-sm text-green-700">
+            {currentSetting.tgl_mulai} - {currentSetting.tgl_berakhir}
+          </div>
+        )}
+      </div>
+    </CardContent>
+  </Card>
+)}
 
+      {/* Academic Year & Semester Filter - Compact */}
+{currentSetting && (
+  <AcademicYearFilter
+    academicYear={params.tahun_akademik || currentSetting.tahun_akademik}
+    semester={params.semester || currentSetting.semester}
+    onAcademicYearChange={actions.setAcademicYear}
+    onSemesterChange={actions.setSemester}
+    loading={loading}
+  />
+)}
       {/* Statistics Cards */}
       <RegisterStats 
         statistics={statistics} 
@@ -133,7 +160,7 @@ function RegisterList() {
         onStatusChange={actions.setStatus}
         onLocationChange={actions.setLocation}
         onClearFilters={actions.clearFilters}
-        hasActiveFilters={hasActiveFilters}
+        hasActiveFilters={!!hasActiveFilters}
         loading={loading}
       />
 
@@ -147,7 +174,7 @@ function RegisterList() {
       />
 
       {/* Pagination */}
-      {pagination && !loading && (
+      {pagination && !loading && pagination.total > 0 && (
         <RegisterPagination
           currentPage={pagination.current_page}
           lastPage={pagination.last_page}

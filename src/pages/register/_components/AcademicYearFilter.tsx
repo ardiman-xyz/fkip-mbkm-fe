@@ -1,4 +1,3 @@
-// src/pages/register/_components/AcademicYearFilter.tsx
 import React, { useState, useEffect } from 'react';
 import {
   Select,
@@ -35,11 +34,6 @@ function AcademicYearFilter({
       try {
         const options = await registrantService.getFilterOptions();
         setFilterOptions(options);
-        
-        // Set default to current active period if available
-        if (options.academic_years.length > 0 && academicYear === '2024/2025') {
-          onAcademicYearChange(options.academic_years[0].value);
-        }
       } catch (error) {
         console.error('Failed to fetch filter options:', error);
       } finally {
@@ -51,8 +45,8 @@ function AcademicYearFilter({
   }, []);
 
   const academicYears = filterOptions?.academic_years || [
+    { value: '2025/2026', label: '2025/2026' },
     { value: '2024/2025', label: '2024/2025' },
-    { value: '2023/2024', label: '2023/2024' },
   ];
 
   const semesters = [
@@ -66,7 +60,7 @@ function AcademicYearFilter({
         <CardContent className="p-4">
           <div className="flex items-center justify-center">
             <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-            <span className="ml-2 text-sm text-blue-700">Memuat filter periode...</span>
+            <span className="ml-2 text-sm text-blue-700">Memuat periode akademik...</span>
           </div>
         </CardContent>
       </Card>
@@ -98,7 +92,7 @@ function AcademicYearFilter({
                 onValueChange={onAcademicYearChange}
                 disabled={loading}
               >
-                <SelectTrigger className="w-32 h-8 bg-white border-blue-200">
+                <SelectTrigger className="w-36 h-8 bg-white border-blue-200">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -136,12 +130,7 @@ function AcademicYearFilter({
               </Select>
             </div>
 
-            {/* Current Period Indicator */}
-            <div className="flex items-center gap-1 text-xs text-blue-600">
-              <Clock className="h-3 w-3" />
-              <span>Periode Aktif</span>
-              {loading && <Loader2 className="h-3 w-3 animate-spin ml-1" />}
-            </div>
+            {loading && <Loader2 className="h-3 w-3 animate-spin text-blue-600" />}
           </div>
         </div>
       </CardContent>

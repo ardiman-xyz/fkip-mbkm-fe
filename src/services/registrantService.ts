@@ -17,7 +17,29 @@ import type {
 } from "@/types/registrant";
 import apiClient from "../config/api";
 
+
 export const registrantService = {
+
+  async getActiveRegistrants(params: Omit<RegistrantsParams, 'tahun_akademik' | 'semester'> = {}): Promise<RegistrantsResponse> {
+    try {
+      const response = await apiClient.get<{
+        success: boolean;
+        message: string;
+        data: RegistrantsResponse;
+      }>("/admin/registrants/active", { params });
+      
+      if (response.data.success) {
+        return response.data.data;
+      }
+      throw new Error(response.data.message || "Gagal mengambil data pendaftar aktif");
+    } catch (error: any) {
+      if (error.response?.data) {
+        throw new Error(error.response.data.message || "Gagal mengambil data pendaftar aktif");
+      }
+      throw new Error("Network error. Periksa koneksi server.");
+    }
+  },
+
   // Get registrants with pagination and filters
   async getRegistrants(params: RegistrantsParams = {}): Promise<RegistrantsResponse> {
     try {

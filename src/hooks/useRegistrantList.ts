@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { registrantService } from '@/services/registrantService';
+import { settingService } from '@/services/settingService';
 import type { 
   Registrant, 
   RegistrantsParams, 
@@ -23,6 +24,9 @@ interface UseRegistrantListReturn {
   // Filter states
   params: RegistrantsParams;
   
+  // Current period info
+  currentSetting: any;
+  
   // Actions
   actions: {
     setAcademicYear: (year: string) => void;
@@ -38,6 +42,7 @@ interface UseRegistrantListReturn {
     refresh: () => void;
     fetchData: (showLoading?: boolean) => Promise<void>;
     exportData: () => Promise<void>;
+    resetToCurrentPeriod: () => void;
   };
 }
 
@@ -46,49 +51,106 @@ export function useRegistrantList(): UseRegistrantListReturn {
   const [registrants, setRegistrants] = useState<Registrant[]>([]);
   const [statistics, setStatistics] = useState<RegistrantStatistics | null>(null);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
+  const [currentSetting, setCurrentSetting] = useState<any>(null);
 
   // Loading states
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string>('');
+  const [initialized, setInitialized] = useState(false);
 
-  // Filter states
-  const [params, setParams] = useState<RegistrantsParams>({
-    page: 1,
-    per_page: 15,
-    tahun_akademik: '2024/2025',
-    semester: 'Ganjil',
-  });
+const [params, setParams] = useState<RegistrantsParams>({
+  page: 1,
+  per_page: 15,
+  tahun_akademik: undefined, // Akan di-set nanti dari currentSetting
+  semester: undefined,
+});
+  // Initialize with current active period
+  useEffect(() => {
+    const initializeWithCurrentPeriod = async () => {
+      if (initialized) return;
+
+      try {
+        // Try to get current active setting
+        const activeSetting = await settingService.getCurrentSetting().catch(() => null);
+        
+        if (activeSetting) {
+          setCurrentSetting(activeSetting);
+          setParams(prev => ({
+            ...prev,
+            tahun_akademik: activeSetting.tahun_akademik,
+            semester: activeSetting.semester,
+          }));
+        } else {
+          // Fallback to latest available period
+          const options = await registrantService.getFilterOptions().catch(() => null);
+          if (options && options.academic_years.length > 0) {
+            setParams(prev => ({
+              ...prev,
+              tahun_akademik: options.academic_years[0].value,
+              semester: 'Ganjil', // Default semester
+            }));
+          } else {
+            // Final fallback
+            setParams(prev => ({
+              ...prev,
+              tahun_akademik: '2025/2026',
+              semester: 'Ganjil',
+            }));
+          }
+        }
+        
+        setInitialized(true);
+      } catch (error) {
+        console.error('Failed to initialize with current period:', error);
+        // Use final fallback
+        setParams(prev => ({
+          ...prev,
+          tahun_akademik: '2025/2026',
+          semester: 'Ganjil',
+        }));
+        setInitialized(true);
+      }
+    };
+
+    initializeWithCurrentPeriod();
+  }, [initialized]);
 
   // Fetch data function
   const fetchData = useCallback(async (showLoading = true) => {
-    try {
-      if (showLoading) setLoading(true);
-      setError('');
+  if (!initialized) return;
 
-      const response = await registrantService.getRegistrants(params);
+  try {
+    if (showLoading) setLoading(true);
+    setError('');
 
-      setRegistrants(response.registrants.data);
-      setStatistics(response.statistics);
-      setPagination(response.registrants.pagination);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Gagal memuat data';
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [params]);
+    // Gunakan endpoint biasa, bukan /active
+    const response = await registrantService.getRegistrants(params);
 
-  // Initial load and when params change
+    setRegistrants(response.registrants.data);
+    setStatistics(response.statistics);
+    setPagination(response.registrants.pagination);
+    
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Gagal memuat data';
+    setError(errorMessage);
+    toast.error(errorMessage);
+  } finally {
+    setLoading(false);
+    setRefreshing(false);
+  }
+}, [params, initialized]);
+
+  // Fetch data when params change and initialized
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (initialized) {
+      fetchData();
+    }
+  }, [fetchData, initialized]);
 
   // Debounced search effect
   useEffect(() => {
-    if (params.search !== undefined) {
+    if (params.search !== undefined && initialized) {
       const timeoutId = setTimeout(() => {
         if (params.page === 1) {
           fetchData(false);
@@ -99,7 +161,7 @@ export function useRegistrantList(): UseRegistrantListReturn {
 
       return () => clearTimeout(timeoutId);
     }
-  }, [params.search, params.jenis_kegiatan, params.id_prodi, params.status, params.lokasi]);
+  }, [params.search, params.jenis_kegiatan, params.id_prodi, params.status, params.lokasi, initialized]);
 
   // Actions
   const actions = {
@@ -168,11 +230,18 @@ export function useRegistrantList(): UseRegistrantListReturn {
     },
 
     clearFilters: () => {
+      const baseParams = currentSetting ? {
+        tahun_akademik: currentSetting.tahun_akademik,
+        semester: currentSetting.semester,
+      } : {
+        tahun_akademik: params.tahun_akademik,
+        semester: params.semester,
+      };
+
       setParams(prev => ({
         page: 1,
         per_page: prev.per_page,
-        tahun_akademik: prev.tahun_akademik,
-        semester: prev.semester,
+        ...baseParams,
       }));
     },
 
@@ -182,6 +251,18 @@ export function useRegistrantList(): UseRegistrantListReturn {
     },
 
     fetchData,
+
+    resetToCurrentPeriod: () => {
+      if (currentSetting) {
+        setParams(prev => ({
+          page: 1,
+          per_page: prev.per_page,
+          tahun_akademik: currentSetting.tahun_akademik,
+          semester: currentSetting.semester,
+        }));
+        toast.success(`Kembali ke periode aktif: ${currentSetting.tahun_akademik} ${currentSetting.semester}`);
+      }
+    },
 
     exportData: async () => {
       try {
@@ -217,7 +298,7 @@ export function useRegistrantList(): UseRegistrantListReturn {
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
-        link.setAttribute('download', `registrants-export-${new Date().getTime()}.csv`);
+        link.setAttribute('download', `registrants-export-${params.tahun_akademik || 'all'}-${params.semester || 'all'}-${new Date().getTime()}.csv`);
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
@@ -238,12 +319,15 @@ export function useRegistrantList(): UseRegistrantListReturn {
     pagination,
     
     // Loading states
-    loading,
+    loading: loading || !initialized,
     refreshing,
     error,
     
     // Filter states
     params,
+    
+    // Current period info
+    currentSetting,
     
     // Actions
     actions,
