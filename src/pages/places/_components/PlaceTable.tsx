@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -228,11 +227,11 @@ export function PlaceTable({
                             <Eye className="mr-2 h-4 w-4" />
                             Lihat Detail
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => onEdit(place)}>
+                          {/* <DropdownMenuItem onClick={() => onEdit(place)}>
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
-                          <DropdownMenuSeparator />
+                          <DropdownMenuSeparator /> */}
                           {getStatusToggleItem(place)}
                           <DropdownMenuSeparator />
                           <DropdownMenuItem 

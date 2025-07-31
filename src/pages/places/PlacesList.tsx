@@ -142,7 +142,6 @@ const PlacesList = () => {
         onDelete={handleDelete}
         onToggleStatus={actions.togglePlaceStatus}
         togglingStatusId={togglingStatusId}
-        deletingId={isDeletingPlace}
       />
 
       {/* Pagination */}

@@ -14,11 +14,11 @@ import {
 import {
   LayoutDashboard,
   Users,
-  Building2,
-  NotebookPen,
   type LucideIcon,
   SwatchBook,
   MapPin,
+  UsersRound,
+  Settings,
  
 } from "lucide-react";
 import type { JSX } from "react";
@@ -58,15 +58,41 @@ const menuSections: MenuSection[] = [
       },
     ],
   },
+  {
+    label: "Kegiatan",
+    items: [
+     
+      {
+        title: "Pendaftar Program",
+        url: "/register",
+        icon: Users,
+      },
+       {
+        title: "Bimbingan",
+        url: "/guidance",
+        icon: UsersRound,
+      },
+      
+    ],
+  },
+  {
+    label: "Pengaturan",
+    items: [
+      {
+        title: "Pendaftaran",
+        url: "settings/guidance",
+        icon: Settings,
+      },
+      
+    ],
+  },
 ];
 
-// Props interface for MenuSection component
 interface MenuSectionProps {
   items: MenuItem[];
   location: { pathname: string };
 }
 
-// Komponen untuk render menu items
 const MenuSection: React.FC<MenuSectionProps> = ({ items, location }) => (
   <SidebarMenu>
     {items.map((item) => (
@@ -90,7 +116,7 @@ export function AppSidebar(): JSX.Element | null {
   const { user } = useAuth();
 
   if (!user) {
-    return null; // or redirect to login
+    return null; 
   }
 
   return (
@@ -105,7 +131,6 @@ export function AppSidebar(): JSX.Element | null {
       </SidebarHeader>
 
       <SidebarContent>
-        {/* Dashboard Menu */}
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
