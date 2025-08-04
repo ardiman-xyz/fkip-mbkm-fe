@@ -1,47 +1,46 @@
-// src/pages/register/_components/forms/PersonalInfoForm.tsx
-import React from 'react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, Phone, Mail, AlertCircle } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { User, Phone, Mail, AlertCircle, Shirt } from "lucide-react";
 
-interface PersonalInfoFormProps {
+interface PersonalInfoSectionProps {
   data: {
     nim: string;
     student_name: string;
     no_hp: string;
-    email: string;
+    ukuran_baju: string;
   };
   errors: Record<string, string>;
   onChange: (field: string, value: string) => void;
   disabled?: boolean;
 }
 
-function PersonalInfoForm({
+export default function PersonalInfoSection({
   data,
   errors,
   onChange,
   disabled = false,
-}: PersonalInfoFormProps) {
+}: PersonalInfoSectionProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg">
+        <CardTitle className="flex items-center gap-2">
           <User className="h-4 w-4" />
           Informasi Pribadi
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="grid gap-4 md:grid-cols-2">
         {/* NIM */}
         <div className="space-y-2">
           <Label htmlFor="nim">NIM *</Label>
           <Input
             id="nim"
             value={data.nim}
-            onChange={(e) => onChange('nim', e.target.value)}
+            onChange={(e) => onChange("nim", e.target.value)}
             placeholder="Masukkan NIM mahasiswa"
-            className={errors.nim ? 'border-red-500' : ''}
+            className={errors.nim ? "border-red-500" : ""}
             disabled={disabled}
+            maxLength={15}
           />
           {errors.nim && (
             <div className="flex items-center gap-1 text-sm text-red-600">
@@ -49,6 +48,9 @@ function PersonalInfoForm({
               {errors.nim}
             </div>
           )}
+          <p className="text-xs text-muted-foreground">
+            Format: 10-15 digit angka
+          </p>
         </div>
 
         {/* Student Name */}
@@ -57,10 +59,11 @@ function PersonalInfoForm({
           <Input
             id="student_name"
             value={data.student_name}
-            onChange={(e) => onChange('student_name', e.target.value)}
+            onChange={(e) => onChange("student_name", e.target.value)}
             placeholder="Masukkan nama lengkap mahasiswa"
-            className={errors.student_name ? 'border-red-500' : ''}
+            className={errors.student_name ? "border-red-500" : ""}
             disabled={disabled}
+            maxLength={100}
           />
           {errors.student_name && (
             <div className="flex items-center gap-1 text-sm text-red-600">
@@ -68,6 +71,9 @@ function PersonalInfoForm({
               {errors.student_name}
             </div>
           )}
+          <p className="text-xs text-muted-foreground">
+            {data.student_name.length}/100 karakter
+          </p>
         </div>
 
         {/* Phone Number */}
@@ -78,10 +84,11 @@ function PersonalInfoForm({
             <Input
               id="no_hp"
               value={data.no_hp}
-              onChange={(e) => onChange('no_hp', e.target.value)}
+              onChange={(e) => onChange("no_hp", e.target.value)}
               placeholder="08xxxxxxxxxx"
-              className={`pl-10 ${errors.no_hp ? 'border-red-500' : ''}`}
+              className={`pl-10 ${errors.no_hp ? "border-red-500" : ""}`}
               disabled={disabled}
+              maxLength={15}
             />
           </div>
           {errors.no_hp && (
@@ -90,33 +97,37 @@ function PersonalInfoForm({
               {errors.no_hp}
             </div>
           )}
+          <p className="text-xs text-muted-foreground">
+            Format: 08xxx, 62xxx, atau +62xxx
+          </p>
         </div>
 
-        {/* Email */}
         <div className="space-y-2">
-          <Label htmlFor="email">Email *</Label>
+          <Label htmlFor="email">Ukuran baju *</Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Shirt className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              id="email"
-              type="email"
-              value={data.email}
-              onChange={(e) => onChange('email', e.target.value)}
-              placeholder="mahasiswa@email.com"
-              className={`pl-10 ${errors.email ? 'border-red-500' : ''}`}
+              id="ukuran_baju"
+              type="string"
+              value={data.ukuran_baju}
+              onChange={(e) => onChange("ukuran_baju", e.target.value)}
+              placeholder="M, L, XL, atau XXL"
+              className={`pl-10 ${errors.email ? "border-red-500" : ""}`}
               disabled={disabled}
+              maxLength={100}
             />
           </div>
-          {errors.email && (
+          {errors.ukuran_baju && (
             <div className="flex items-center gap-1 text-sm text-red-600">
               <AlertCircle className="h-3 w-3" />
-              {errors.email}
+              {errors.ukuran_baju}
             </div>
           )}
+          <p className="text-xs text-muted-foreground">
+            Ukuran baju akan digunakan untuk seragam kegiatan
+          </p>
         </div>
       </CardContent>
     </Card>
   );
 }
-
-export default PersonalInfoForm;

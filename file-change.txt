@@ -1,0 +1,3 @@
+database:
+    tabel unit pendaftar:
+        ubah kolom bukti_bayar jadi nullable

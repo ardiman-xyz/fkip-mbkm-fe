@@ -11,7 +11,6 @@ import RegisterTable from "./_components/RegisterTable";
 import RegisterPagination from "./_components/RegisterPagination";
 import { useRegistrantList } from "@/hooks/useRegistrantList";
 import type { DetailedRegistrant } from "@/types/registrant";
-import AddRegistrantModal from "./_components/RegistrantAddModal";
 import { useNavigate } from "react-router";
 
 function RegisterList() {
@@ -212,13 +211,6 @@ function RegisterList() {
           onPerPageChange={actions.setPerPage}
         />
       )}
-
-      {/* Add Registrant Modal */}
-      <AddRegistrantModal
-        open={isAddModalOpen}
-        onClose={handleAddClose}
-        onSuccess={handleAddSuccess}
-      />
     </div>
   );
 }

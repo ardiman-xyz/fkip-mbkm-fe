@@ -1,5 +1,7 @@
 // src/types/registrant.ts
 
+import z from "zod";
+
 export interface Registrant {
   id: number;
   nim: string;
@@ -47,9 +49,13 @@ export interface StudentInfo {
   jenis_kelamin?: string;
 }
 
-export type RegistrantStatus = 'pending_payment' | 'active' | 'awaiting_assessment' | 'completed';
-export type PaymentStatus = 'paid' | 'unpaid';
-export type ReportStatus = 'submitted' | 'not_submitted';
+export type RegistrantStatus =
+  | "pending_payment"
+  | "active"
+  | "awaiting_assessment"
+  | "completed";
+export type PaymentStatus = "paid" | "unpaid";
+export type ReportStatus = "submitted" | "not_submitted";
 
 export interface RegistrantsResponse {
   registrants: {
@@ -112,7 +118,7 @@ export interface CreateRegistrantData {
   nim: string;
   id_prodi: number;
   tahun_akademik: string;
-  semester: 'Ganjil' | 'Genap';
+  semester: "Ganjil" | "Genap";
   jenis_kegiatan: string;
   jenis_kepesertaan?: string;
   lokasi: string;
@@ -120,6 +126,7 @@ export interface CreateRegistrantData {
   ukuran_baju?: string;
   btq?: string;
   link_kegiatan_magang?: string;
+  tanggal_bayar: string;
 }
 
 export interface UpdateRegistrantData extends Partial<CreateRegistrantData> {
@@ -159,7 +166,7 @@ export interface DashboardSummary {
 
 export interface BulkActionData {
   registrant_ids: number[];
-  status?: 'approve' | 'reject' | 'activate';
+  status?: "approve" | "reject" | "activate";
 }
 
 export interface UploadResponse {
@@ -181,3 +188,80 @@ export interface RegistrantsResponse {
     tgl_berakhir: string;
   };
 }
+
+export const registrantSchema = z.object({
+  nim: z
+    .string()
+    .min(1, "NIM wajib diisi")
+    .regex(/^\d{8}$/, "NIM harus berupa angka 8 digit"),
+  student_name: z
+    .string()
+    .min(3, "Nama minimal 3 karakter")
+    .max(100, "Nama maksimal 100 karakter"),
+  no_hp: z
+    .string()
+    .min(1, "Nomor HP wajib diisi")
+    .regex(
+      /^(\+62|62|0)[0-9]{9,13}$/,
+      "Format nomor HP tidak valid (contoh: 08123456789)"
+    ),
+  ukuran_baju: z.string().min(1, "Ukuran baju wajib diisi"),
+  id_prodi: z.string().min(1, "Program studi wajib dipilih"),
+  tahun_akademik: z.string().min(1, "Tahun akademik wajib dipilih"),
+  semester: z.string().min(1, "Semester wajib dipilih"),
+  jenis_kegiatan: z.string().min(1, "Jenis kegiatan wajib dipilih"),
+  id_tempat: z.string().min(1, "Tempat kegiatan wajib dipilih"),
+  tanggal_bayar: z
+    .string()
+    .min(1, "Tanggal bayar wajib diisi")
+    .refine((date) => {
+      const paymentDate = new Date(date);
+      const today = new Date();
+      return paymentDate <= today;
+    }, "Tanggal bayar tidak boleh lebih dari hari ini"),
+  lokasi: z
+    .string()
+    .min(3, "Lokasi minimal 3 karakter")
+    .max(100, "Lokasi maksimal 100 karakter"),
+  alamat_lokasi: z
+    .string()
+    .min(10, "Alamat minimal 10 karakter")
+    .max(255, "Alamat maksimal 255 karakter"),
+  keterangan: z
+    .string()
+    .max(500, "Keterangan maksimal 500 karakter")
+    .optional(),
+});
+
+export const fileSchema = z.object({
+  bukti_bayar: z
+    .instanceof(File, { message: "Bukti pembayaran wajib diupload" })
+    .refine((file) => file.size <= 5 * 1024 * 1024, "Ukuran file maksimal 5MB")
+    .refine(
+      (file) =>
+        ["image/jpeg", "image/jpg", "image/png", "application/pdf"].includes(
+          file.type
+        ),
+      "Format file harus JPG, PNG, atau PDF"
+    ),
+  bukti_btq: z
+    .instanceof(File, { message: "Bukti BTQ wajib diupload" })
+    .refine((file) => file.size <= 5 * 1024 * 1024, "Ukuran file maksimal 5MB")
+    .refine(
+      (file) =>
+        ["image/jpeg", "image/jpg", "image/png", "application/pdf"].includes(
+          file.type
+        ),
+      "Format file harus JPG, PNG, atau PDF"
+    ),
+  surat_rekomendasi: z
+    .instanceof(File, { message: "Surat rekomendasi wajib diupload" })
+    .refine((file) => file.size <= 5 * 1024 * 1024, "Ukuran file maksimal 5MB")
+    .refine(
+      (file) =>
+        ["image/jpeg", "image/jpg", "image/png", "application/pdf"].includes(
+          file.type
+        ),
+      "Format file harus JPG, PNG, atau PDF"
+    ),
+});

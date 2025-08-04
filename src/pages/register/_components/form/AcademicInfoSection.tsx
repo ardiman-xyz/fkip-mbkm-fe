@@ -1,17 +1,16 @@
-// src/pages/register/_components/forms/AcademicInfoForm.tsx
-import React from 'react';
-import { Label } from '@/components/ui/label';
+import React from "react";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { GraduationCap, AlertCircle } from 'lucide-react';
+} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { GraduationCap, AlertCircle, Loader2 } from "lucide-react";
 
-interface AcademicInfoFormProps {
+interface AcademicInfoSectionProps {
   data: {
     id_prodi: string;
     tahun_akademik: string;
@@ -25,7 +24,7 @@ interface AcademicInfoFormProps {
   academicYears: Array<{ value: string; label: string }>;
 }
 
-function AcademicInfoForm({
+export default function AcademicInfoSection({
   data,
   errors,
   onChange,
@@ -33,35 +32,34 @@ function AcademicInfoForm({
   loading = false,
   studyPrograms,
   academicYears,
-}: AcademicInfoFormProps) {
+}: AcademicInfoSectionProps) {
   const semesters = [
-    { value: 'Ganjil', label: 'Ganjil' },
-    { value: 'Genap', label: 'Genap' },
+    { value: "Ganjil", label: "Ganjil" },
+    { value: "Genap", label: "Genap" },
   ];
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg">
+        <CardTitle className="flex items-center gap-2">
           <GraduationCap className="h-4 w-4" />
           Informasi Akademik
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Study Program */}
+      <CardContent className="grid gap-4 md:grid-cols-3">
         <div className="space-y-2">
           <Label htmlFor="id_prodi">Program Studi *</Label>
-          <Select 
-            value={data.id_prodi} 
-            onValueChange={(value) => onChange('id_prodi', value)}
+          <Select
+            value={data.id_prodi}
+            onValueChange={(value) => onChange("id_prodi", value)}
             disabled={disabled || loading}
           >
-            <SelectTrigger className={errors.id_prodi ? 'border-red-500' : ''}>
+            <SelectTrigger className={errors.id_prodi ? "border-red-500" : ""}>
               <SelectValue placeholder="Pilih program studi" />
             </SelectTrigger>
             <SelectContent>
               {studyPrograms.map((program) => (
-                <SelectItem key={program.value} value={program.value}>
+                <SelectItem key={program.value} value={`${program.value}`}>
                   {program.label}
                 </SelectItem>
               ))}
@@ -73,17 +71,24 @@ function AcademicInfoForm({
               {errors.id_prodi}
             </div>
           )}
+          {loading && (
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <Loader2 className="h-3 w-3 animate-spin" />
+              Memuat program studi...
+            </div>
+          )}
         </div>
 
-        {/* Academic Year */}
         <div className="space-y-2">
           <Label htmlFor="tahun_akademik">Tahun Akademik *</Label>
-          <Select 
-            value={data.tahun_akademik} 
-            onValueChange={(value) => onChange('tahun_akademik', value)}
-            disabled={disabled || loading}
+          <Select
+            value={data.tahun_akademik}
+            onValueChange={(value) => onChange("tahun_akademik", value)}
+            disabled={true}
           >
-            <SelectTrigger className={errors.tahun_akademik ? 'border-red-500' : ''}>
+            <SelectTrigger
+              className={errors.tahun_akademik ? "border-red-500" : ""}
+            >
               <SelectValue placeholder="Pilih tahun akademik" />
             </SelectTrigger>
             <SelectContent>
@@ -102,15 +107,14 @@ function AcademicInfoForm({
           )}
         </div>
 
-        {/* Semester */}
         <div className="space-y-2">
           <Label htmlFor="semester">Semester *</Label>
-          <Select 
-            value={data.semester} 
-            onValueChange={(value) => onChange('semester', value)}
-            disabled={disabled}
+          <Select
+            value={data.semester}
+            onValueChange={(value) => onChange("semester", value)}
+            disabled={true}
           >
-            <SelectTrigger className={errors.semester ? 'border-red-500' : ''}>
+            <SelectTrigger className={errors.semester ? "border-red-500" : ""}>
               <SelectValue placeholder="Pilih semester" />
             </SelectTrigger>
             <SelectContent>
@@ -132,5 +136,3 @@ function AcademicInfoForm({
     </Card>
   );
 }
-
-export default AcademicInfoForm;
