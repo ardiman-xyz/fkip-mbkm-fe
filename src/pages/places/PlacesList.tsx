@@ -9,6 +9,7 @@ import { PlaceTable } from './_components/PlaceTable';
 import { PlacePagination } from './_components/PlacePagination';
 import { PlaceErrorState } from './_components/PlaceErrorState';
 import { PlaceEditModal } from './_components/PlaceEditModal';
+import { PlaceAddModal } from './_components/PlaceAddModal';
 import { PlaceDeleteModal } from './_components/PlaceDeleteModal';
 import type { Place } from '@/types/place';
 
@@ -29,6 +30,7 @@ const PlacesList = () => {
   // Modal states
   const [editingPlace, setEditingPlace] = useState<Place | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [deletePlace, setDeletePlace] = useState<Place | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeletingPlace, setIsDeletingPlace] = useState<number | null>(null);
@@ -52,6 +54,20 @@ const PlacesList = () => {
   const handleEditClose = () => {
     setIsEditModalOpen(false);
     setEditingPlace(null);
+  };
+
+  const handleAddNew = () => {
+    setIsAddModalOpen(true);
+  };
+
+  const handleAddSuccess = (newPlace: Place) => {
+    // Refresh the place list to get updated data
+    actions.refreshData();
+    toast.success(`Tempat "${newPlace.nama_sekolah}" berhasil ditambahkan`);
+  };
+
+  const handleAddClose = () => {
+    setIsAddModalOpen(false);
   };
 
   const handleDelete = (place: Place) => {
@@ -93,10 +109,6 @@ const PlacesList = () => {
   const handleDeleteCancel = () => {
     setIsDeleteModalOpen(false);
     setDeletePlace(null);
-  };
-
-  const handleAddNew = () => {
-    toast.info('Tambah tempat baru');
   };
 
   // Render error state
@@ -158,6 +170,13 @@ const PlacesList = () => {
         />
       )}
 
+      {/* Add Modal */}
+      <PlaceAddModal
+        open={isAddModalOpen}
+        onClose={handleAddClose}
+        onSuccess={handleAddSuccess}
+      />
+
       {/* Edit Modal */}
       <PlaceEditModal
         place={editingPlace}
@@ -178,4 +197,4 @@ const PlacesList = () => {
   );
 };
 
-export default PlacesList
+export default PlacesList;

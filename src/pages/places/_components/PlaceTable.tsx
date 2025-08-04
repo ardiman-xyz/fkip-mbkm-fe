@@ -223,15 +223,15 @@ export function PlaceTable({
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => onView(place)}>
+                          {/* <DropdownMenuItem onClick={() => onView(place)}>
                             <Eye className="mr-2 h-4 w-4" />
                             Lihat Detail
-                          </DropdownMenuItem>
-                          {/* <DropdownMenuItem onClick={() => onEdit(place)}>
+                          </DropdownMenuItem> */}
+                          <DropdownMenuItem onClick={() => onEdit(place)}>
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
-                          <DropdownMenuSeparator /> */}
+                          <DropdownMenuSeparator />
                           {getStatusToggleItem(place)}
                           <DropdownMenuSeparator />
                           <DropdownMenuItem 
