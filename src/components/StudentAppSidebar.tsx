@@ -19,7 +19,6 @@ import {
   MapPin,
   UsersRound,
   Settings,
- 
 } from "lucide-react";
 import type { JSX } from "react";
 import { useAuth } from "@/context/AuthProvider";
@@ -61,18 +60,16 @@ const menuSections: MenuSection[] = [
   {
     label: "Kegiatan",
     items: [
-     
       {
         title: "Pendaftar Program",
         url: "/register/list",
         icon: Users,
       },
-       {
+      {
         title: "Bimbingan",
         url: "/guidance",
         icon: UsersRound,
       },
-      
     ],
   },
   {
@@ -80,10 +77,9 @@ const menuSections: MenuSection[] = [
     items: [
       {
         title: "Pendaftaran",
-        url: "settings/guidance",
+        url: "settings/register",
         icon: Settings,
       },
-      
     ],
   },
 ];
@@ -116,7 +112,7 @@ export function AppSidebar(): JSX.Element | null {
   const { user } = useAuth();
 
   if (!user) {
-    return null; 
+    return null;
   }
 
   return (

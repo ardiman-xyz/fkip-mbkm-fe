@@ -7,11 +7,12 @@ import DashboarLayout from "@/components/DashboardLayout";
 import ProgramList from "@/pages/programs/ProgramList";
 import AddNewProgram from "@/pages/programs/AddNewProgram";
 import PlacesList from "@/pages/places/PlacesList";
-import GuidanceList from "@/pages/setting/guidance/GuidanceList";
+import RegisterSetting from "@/pages/setting/register/RegisterSetting";
 import NotFound from "@/pages/NotFound";
 import RegisterList from "@/pages/register/RegisterList";
 import RegisterCreate from "@/pages/register/RegisterCreate";
 import RegisterEdit from "@/pages/register/RegisterEdit";
+import GuidanceList from "@/pages/guidance/GuidanceList";
 
 function AuthRedirect() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -61,8 +62,8 @@ export const router = createBrowserRouter([
         element: <PlacesList />,
       },
       {
-        path: "settings/guidance",
-        element: <GuidanceList />,
+        path: "settings/register",
+        element: <RegisterSetting />,
       },
       {
         path: "register/list",
@@ -75,6 +76,11 @@ export const router = createBrowserRouter([
       {
         path: "register/:id/edit",
         element: <RegisterEdit />,
+      },
+
+      {
+        path: "guidance",
+        element: <GuidanceList />,
       },
     ],
   },
