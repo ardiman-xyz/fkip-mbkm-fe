@@ -1,20 +1,20 @@
 // src/pages/register/_components/RegisterTable.tsx
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { 
-  MoreHorizontal, 
-  Eye, 
-  Edit, 
-  Trash2, 
+} from "@/components/ui/dropdown-menu";
+import {
+  MoreHorizontal,
+  Eye,
+  Edit,
+  Trash2,
   User,
   GraduationCap,
   MapPin,
@@ -25,10 +25,11 @@ import {
   CreditCard,
   FileText,
   CheckCircle,
-  XCircle
-} from 'lucide-react';
-import { toast } from 'sonner';
-import type { Registrant } from '@/types/registrant';
+  XCircle,
+} from "lucide-react";
+import { toast } from "sonner";
+import type { Registrant } from "@/types/registrant";
+import { useNavigate } from "react-router";
 
 interface RegisterTableProps {
   registrants: Registrant[];
@@ -45,26 +46,28 @@ function RegisterTable({
   perPage = 15,
   onRefresh,
 }: RegisterTableProps) {
+  const navigate = useNavigate();
+
   const [actionLoading, setActionLoading] = useState<number | null>(null);
 
   const getStatusBadge = (status: string, statusColor: string) => {
     const colorMap: { [key: string]: string } = {
-      'success': 'bg-green-100 text-green-800 hover:bg-green-200',
-      'primary': 'bg-blue-100 text-blue-800 hover:bg-blue-200',
-      'warning': 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200',
-      'danger': 'bg-red-100 text-red-800 hover:bg-red-200',
-      'secondary': 'bg-gray-100 text-gray-600 hover:bg-gray-200',
+      success: "bg-green-100 text-green-800 hover:bg-green-200",
+      primary: "bg-blue-100 text-blue-800 hover:bg-blue-200",
+      warning: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200",
+      danger: "bg-red-100 text-red-800 hover:bg-red-200",
+      secondary: "bg-gray-100 text-gray-600 hover:bg-gray-200",
     };
 
     return (
-      <Badge className={colorMap[statusColor] || colorMap['secondary']}>
+      <Badge className={colorMap[statusColor] || colorMap["secondary"]}>
         {status}
       </Badge>
     );
   };
 
   const getPaymentStatusIcon = (paymentStatus: string) => {
-    return paymentStatus === 'paid' ? (
+    return paymentStatus === "paid" ? (
       <CheckCircle className="h-4 w-4 text-green-600" />
     ) : (
       <XCircle className="h-4 w-4 text-red-600" />
@@ -72,7 +75,7 @@ function RegisterTable({
   };
 
   const getReportStatusIcon = (reportStatus: string) => {
-    return reportStatus === 'submitted' ? (
+    return reportStatus === "submitted" ? (
       <FileText className="h-4 w-4 text-blue-600" />
     ) : (
       <FileText className="h-4 w-4 text-gray-400" />
@@ -85,21 +88,20 @@ function RegisterTable({
   };
 
   const handleEdit = (registrant: Registrant) => {
-    toast.info(`Edit: ${registrant.student_name}`);
-    // TODO: Navigate to edit page or open modal
+    navigate(`/register/${registrant.id}/edit`);
   };
 
   const handleDelete = async (registrant: Registrant) => {
     if (!confirm(`Hapus pendaftar ${registrant.student_name}?`)) return;
-    
+
     setActionLoading(registrant.id);
     try {
       // TODO: Implement delete API call
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Mock delay
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Mock delay
       toast.success(`${registrant.student_name} berhasil dihapus`);
       onRefresh();
     } catch (error) {
-      toast.error('Gagal menghapus pendaftar');
+      toast.error("Gagal menghapus pendaftar");
     } finally {
       setActionLoading(null);
     }
@@ -109,11 +111,13 @@ function RegisterTable({
     setActionLoading(registrant.id);
     try {
       // TODO: Implement verify payment API call
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Mock delay
-      toast.success(`Pembayaran ${registrant.student_name} berhasil diverifikasi`);
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Mock delay
+      toast.success(
+        `Pembayaran ${registrant.student_name} berhasil diverifikasi`
+      );
       onRefresh();
     } catch (error) {
-      toast.error('Gagal verifikasi pembayaran');
+      toast.error("Gagal verifikasi pembayaran");
     } finally {
       setActionLoading(null);
     }
@@ -145,7 +149,9 @@ function RegisterTable({
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-16">
           <Users className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold">Tidak ada pendaftar ditemukan</h3>
+          <h3 className="text-lg font-semibold">
+            Tidak ada pendaftar ditemukan
+          </h3>
           <p className="text-muted-foreground mt-2">
             Coba sesuaikan filter Anda atau tambah pendaftar baru
           </p>
@@ -181,18 +187,24 @@ function RegisterTable({
                       </span>
                     </div>
                   </td>
-                  
+
                   <td className="p-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                         <User className="h-5 w-5 text-blue-600" />
                       </div>
                       <div>
-                        <h4 className="font-medium">{registrant.student_name}</h4>
+                        <h4 className="font-medium">
+                          {registrant.student_name}
+                        </h4>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-sm text-muted-foreground">{registrant.nim}</span>
+                          <span className="text-sm text-muted-foreground">
+                            {registrant.nim}
+                          </span>
                           <Phone className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-xs text-muted-foreground">{registrant.no_hp}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {registrant.no_hp}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -202,13 +214,19 @@ function RegisterTable({
                     <div className="space-y-1">
                       <div className="flex items-center gap-1">
                         <GraduationCap className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-sm font-medium">{registrant.formatted_activity_type}</span>
+                        <span className="text-sm font-medium">
+                          {registrant.formatted_activity_type}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1">
                         <MapPin className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">{registrant.location_city}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {registrant.location_city}
+                        </span>
                       </div>
-                      <div className="text-xs text-muted-foreground">{registrant.study_program}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {registrant.study_program}
+                      </div>
                     </div>
                   </td>
 
@@ -216,7 +234,9 @@ function RegisterTable({
                     <div className="space-y-1">
                       <div className="flex items-center gap-1">
                         <Calendar className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-sm font-medium">{registrant.tahun_akademik}</span>
+                        <span className="text-sm font-medium">
+                          {registrant.tahun_akademik}
+                        </span>
                       </div>
                       <Badge variant="outline" className="text-xs">
                         {registrant.semester}
@@ -225,20 +245,27 @@ function RegisterTable({
                   </td>
 
                   <td className="p-4">
-                    {getStatusBadge(registrant.status_text, registrant.status_color)}
+                    {getStatusBadge(
+                      registrant.status_text,
+                      registrant.status_color
+                    )}
                   </td>
 
                   <td className="p-4">
                     <div className="flex items-center gap-2">
                       {getPaymentStatusIcon(registrant.payment_status)}
-                      <span className="text-sm">{registrant.payment_status_text}</span>
+                      <span className="text-sm">
+                        {registrant.payment_status_text}
+                      </span>
                     </div>
                   </td>
 
                   <td className="p-4">
                     <div className="flex items-center gap-2">
                       {getReportStatusIcon(registrant.report_status)}
-                      <span className="text-sm">{registrant.report_status_text}</span>
+                      <span className="text-sm">
+                        {registrant.report_status_text}
+                      </span>
                       {registrant.grade && (
                         <Badge variant="outline" className="text-xs">
                           {registrant.grade}
@@ -251,7 +278,11 @@ function RegisterTable({
                     <div className="flex items-center justify-end">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0" disabled={actionLoading === registrant.id}>
+                          <Button
+                            variant="ghost"
+                            className="h-8 w-8 p-0"
+                            disabled={actionLoading === registrant.id}
+                          >
                             {actionLoading === registrant.id ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
                             ) : (
@@ -260,30 +291,37 @@ function RegisterTable({
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleView(registrant)}>
+                          <DropdownMenuItem
+                            onClick={() => handleView(registrant)}
+                          >
                             <Eye className="mr-2 h-4 w-4" />
                             Lihat Detail
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleEdit(registrant)}>
+                          <DropdownMenuItem
+                            onClick={() => handleEdit(registrant)}
+                          >
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          
-                          {registrant.payment_status === 'paid' && registrant.status === 'pending_payment' && (
-                            <>
-                              <DropdownMenuItem 
-                                onClick={() => handleVerifyPayment(registrant)}
-                                className="text-green-600"
-                              >
-                                <CheckCircle className="mr-2 h-4 w-4" />
-                                Verifikasi Pembayaran
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                            </>
-                          )}
-                          
-                          <DropdownMenuItem 
+
+                          {registrant.payment_status === "paid" &&
+                            registrant.status === "pending_payment" && (
+                              <>
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    handleVerifyPayment(registrant)
+                                  }
+                                  className="text-green-600"
+                                >
+                                  <CheckCircle className="mr-2 h-4 w-4" />
+                                  Verifikasi Pembayaran
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                              </>
+                            )}
+
+                          <DropdownMenuItem
                             onClick={() => handleDelete(registrant)}
                             className="text-red-600"
                           >

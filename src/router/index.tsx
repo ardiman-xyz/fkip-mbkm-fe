@@ -11,6 +11,7 @@ import GuidanceList from "@/pages/setting/guidance/GuidanceList";
 import NotFound from "@/pages/NotFound";
 import RegisterList from "@/pages/register/RegisterList";
 import RegisterCreate from "@/pages/register/RegisterCreate";
+import RegisterEdit from "@/pages/register/RegisterEdit";
 
 function AuthRedirect() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -70,6 +71,10 @@ export const router = createBrowserRouter([
       {
         path: "register/create",
         element: <RegisterCreate />,
+      },
+      {
+        path: "register/:id/edit",
+        element: <RegisterEdit />,
       },
     ],
   },
